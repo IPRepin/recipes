@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+
 DATA = {
     'omlet': {
         'яйца, шт': 2,
@@ -18,6 +19,33 @@ DATA = {
     },
     # можете добавить свои рецепты ;)
 }
+
+def recipes(request, recipe):
+    if recipe in DATA:
+        data = DATA[recipe]
+        servings = request.GET.get('servings', None)
+
+        if servings:
+            result = dict()
+            for item, value in data.items():
+                new_value = value * int(servings)
+                result[item] = new_value
+            context = {
+                'recipe_name': recipe,
+                'recipe': result
+            }
+        else:
+            context = {
+                'recipe_name': recipe,
+                'recipe': data
+            }
+
+    else:
+        context = None
+
+    return render(request, template_name='calculator/index.html', context=context)
+
+
 
 # Напишите ваш обработчик. Используйте DATA как источник данных
 # Результат - render(request, 'calculator/index.html', context)
